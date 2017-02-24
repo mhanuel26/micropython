@@ -60,8 +60,7 @@ void mp_hal_delay_us(uint32_t us) {
 
 int mp_hal_stdin_rx_chr(void) {
     for (;;) {
-        //int c = ringbuf_get(&input_buf);
-        int c = uart_std_getc();
+        int c = ringbuf_get(&input_buf);
         if (c != -1) {
             return c;
         }
@@ -83,8 +82,7 @@ int mp_hal_stdin_rx_chr(void) {
 }
 
 void mp_hal_stdout_tx_char(char c) {
-    //uart_tx_one_char(UART0, c);
-    uart_std_putc(c);
+    uart_tx_one_char(UART0, c);
     mp_uos_dupterm_tx_strn(&c, 1);
 }
 
