@@ -35,6 +35,11 @@ static int uart_stdio_disable = 0;
 static os_event_t uart_evt_queue[16];
 #endif
 
+void
+uart_os_nostdio(int dis) {
+  uart_stdio_disable = dis;
+}
+
 static void uart0_rx_intr_handler(void *para);
 
 void soft_reset(void);
@@ -142,11 +147,6 @@ uart_os_config(int uart) {
     uart_os = uart;
 }
 
-void
-uart_os_nostdio(int dis) {
-  uart_stdio_disable = dis;
-}
-
 /******************************************************************************
  * FunctionName : uart0_rx_intr_handler
  * Description  : Internal used function
@@ -204,6 +204,23 @@ bool uart_rx_wait(uint32_t timeout_us) {
         }
         ets_event_poll();
     }
+}
+
+void uart_std_putc(uint8 c)
+{
+    if (uart_stdio_disable) {
+        return;
+    }
+    uart_tx_one_char(UART0, c);
+}
+
+// Returns char from the input buffer, else -1 if buffer is empty.
+int uart_std_getc(void) {
+// DBE - Disconnect REPL
+if (uart_stdio_disable) {  
+    return -1;
+}
+    return ringbuf_get(&input_buf);
 }
 
 int uart_rx_any(uint8 uart) {

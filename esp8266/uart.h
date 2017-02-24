@@ -102,5 +102,8 @@ void uart_setup(uint8 uart);
 // check status of rx/tx
 int uart_rx_any(uint8 uart);
 int uart_tx_any_room(uint8 uart);
+// UART functions used by STDIO (REPL)
+int uart_std_getc(void);
+void uart_std_putc(uint8 c);
 
 #endif // _INCLUDED_UART_H_
