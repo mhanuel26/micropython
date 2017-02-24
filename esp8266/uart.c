@@ -206,23 +206,20 @@ bool uart_rx_wait(uint32_t timeout_us) {
     }
 }
 
-void uart_std_putc(uint8 c)
-{
-  if (uart_stdio_disable) {
-    return;
-  }
-  uart_tx_one_char(UART0, c);
+int uart_rx_any(uint8 uart) {
+    if (input_buf.iget != input_buf.iput) {
+        return true; // have at least 1 char ready for reading
+    }
+    return false;
 }
 
-// Returns char from the input buffer, else -1 if buffer is empty.
-int uart_std_getc(void) {
-  // DBE - Disconnect REPL
-  if (uart_stdio_disable) {  
-    return -1;
-  }
-  return ringbuf_get(&input_buf);
+int uart_tx_any_room(uint8 uart) {
+    uint32_t fifo_cnt = READ_PERI_REG(UART_STATUS(uart)) & (UART_TXFIFO_CNT << UART_TXFIFO_CNT_S);
+    if ((fifo_cnt >> UART_TXFIFO_CNT_S & UART_TXFIFO_CNT) >= 126) {
+        return false;
+    }
+    return true;
 }
-
 
 // Returns char from the input buffer, else -1 if buffer is empty.
 int uart_rx_char(void) {

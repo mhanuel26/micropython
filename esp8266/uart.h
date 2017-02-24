@@ -99,8 +99,8 @@ void uart_tx_one_char(uint8 uart, uint8 TxChar);
 void uart_flush(uint8 uart);
 void uart_os_config(int uart);
 void uart_setup(uint8 uart);
-// UART functions used by STDIO (REPL)
-int uart_std_getc(void);
-void uart_std_putc(uint8 c);
+// check status of rx/tx
+int uart_rx_any(uint8 uart);
+int uart_tx_any_room(uint8 uart);
 
 #endif // _INCLUDED_UART_H_
